@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PyQuizMaster Pro Edition</title>
+    
+    <style>
+        /* Modern Native CSS Reset & Design System */
+        :root {
+            --bg-main: #0f172a;
+            --panel-bg: rgba(30, 41, 59, 0.85);
+            --panel-border: rgba(51, 65, 85, 0.8);
+            --brand-500: #6366f1;
+            --brand-600: #4f46e5;
+            --brand-hover: #4338ca;
+            --accent-emerald: #10b981;
+            --accent-rose: #f43f5e;
+            --accent-amber: #f59e0b;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        /* Glass Panel Container */
+        .app-container {
+            width: 100%;
+            max-width: 850px;
+            min-height: 85vh;
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 1rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Header Bar */
+        header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--panel-border);
+            background: rgba(15, 23, 42, 0.6);
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.25rem;
+            color: var(--brand-500);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .icon-btn {
+            background: #334155;
+            border: 1px solid #475569;
+            color: var(--text-main);
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .icon-btn:hover { background: #475569; }
+
+        /* Stats Grid */
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 600;
+        }
+
+        /* Progress Bar */
+        .progress-track {
+            width: 100%;
+            height: 8px;
+            background: #334155;
+            border-radius: 9999px;
+            margin-top: 1rem;
+            overflow: hidden;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--brand-500), #06b6d4);
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* Content Area */
+        main {
+            flex-grow: 1;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Options Cards */
+        .option-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid var(--panel-border);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.2s;
+        }
+        .option-card:hover {
+            border-color: var(--brand-500);
+            background: rgba(99, 102, 241, 0.05);
+        }
+        .option-card.selected {
+            border-color: var(--brand-500);
+            background: rgba(99, 102, 241, 0.15);
+        }
+
+        .badge {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.25rem 0.6rem;
+            border-radius: 0.375rem;
+            display: inline-block;
+            margin-right: 0.5rem;
+        }
+        .badge-gk { background: rgba(245, 158, 11, 0.2); color: #fcd34d; border: 1px solid rgba(245, 158, 11, 0.3); }
+        .badge-science { background: rgba(16, 185, 129, 0.2); color: #6ee7b7; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-cs { background: rgba(244, 63, 94, 0.2); color: #fca5a5; border: 1px solid rgba(244, 63, 94, 0.3); }
+
+        /* Footer Bar */
+        footer {
+            padding: 1.25rem;
+            border-top: 1px solid var(--panel-border);
+            background: rgba(15, 23, 42, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.6rem 1.25rem;
+            font-weight: 700;
+            border-radius: 0.5rem;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: var(--brand-600); color: white; }
+        .btn-primary:hover { background: var(--brand-hover); }
+        .btn-secondary { background: #334155; color: var(--text-main); }
+        .btn-secondary:hover { background: #475569; }
+
+        /* Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(2, 6, 23, 0.8);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            z-index: 50;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-box {
+            background: #1e293b;
+            border: 1px solid var(--panel-border);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        /* Embedded Canvas Confetti Overlay */
+        #confetti-canvas {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 100;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="confetti-canvas"></canvas>
+
+    <div class="app-container">
+        <header>
+            <div class="header-top">
+                <div class="logo">⚡ QuizMaster Pro</div>
+                <div>
+                    <button id="sound-btn" class="icon-btn" title="Toggle Sound">🔊</button>
+                    <button id="settings-btn" class="icon-btn" title="Settings">⚙️</button>
+                </div>
+            </div>
+            <div class="stats-bar">
+                <div>🏆 Score: <span id="score-val" style="color:var(--text-main)">0</span></div>
+                <div style="text-align: center;">⏱️ <span id="timer-val">00m 00s</span></div>
+                <div id="status-display" style="text-align: right;">Ready</div>
+            </div>
+            <div class="progress-track">
+                <div id="progress-bar" class="progress-fill"></div>
+            </div>
+        </header>
+
+        <main id="main-content">
+            <!-- Dynamically populated -->
+        </main>
+
+        <footer>
+            <button id="review-button" class="btn btn-secondary" style="display: none;">📋 Review All</button>
+            <button id="next-button" class="btn btn-primary" style="display: none; margin-left: auto;">Next Question</button>
+        </footer>
+    </div>
+
+    <!-- Modal -->
+    <div id="modal-overlay" class="modal-overlay">
+        <div id="modal-content" class="modal-box"></div>
+    </div>
+
+    <script>
+        // --- 1. DATA & CONFIG ---
+        const QUIZ_DATA = [
+            {category: "GK", difficulty: 1, question: "What is the capital of Japan?", options: ["Seoul", "Beijing", "Tokyo", "Bangkok"], answer: "Tokyo"},
+            {category: "GK", difficulty: 1, question: "Who is known as the 'Iron Man of India'?", options: ["Jawaharlal Nehru", "Sardar Patel", "B.R. Ambedkar", "Subhas Chandra Bose"], answer: "Sardar Patel"},
+            {category: "GK", difficulty: 1, question: "Which continent is the largest by land area?", options: ["Africa", "Europe", "Asia", "North America"], answer: "Asia"},
+            {category: "Science", difficulty: 2, question: "What is the SI unit of electric current?", options: ["Volt", "Ohm", "Ampere", "Watt"], answer: "Ampere"},
+            {category: "Science", difficulty: 2, question: "Which gas is primarily responsible for the greenhouse effect?", options: ["Oxygen", "Nitrogen", "Carbon Dioxide", "Hydrogen"], answer: "Carbon Dioxide"},
+            {category: "Science", difficulty: 2, question: "Which organelle is referred to as the powerhouse of the cell?", options: ["Nucleus", "Ribosome", "Mitochondria", "Cytoplasm"], answer: "Mitochondria"},
+            {category: "CS", difficulty: 3, question: "Which component is considered the core 'brain' of a computer?", options: ["RAM", "Monitor", "CPU", "Hard Disk"], answer: "CPU"},
+            {category: "CS", difficulty: 3, question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "High-Tech Machine Learning", "Home Tool Link", "Hyperlink Text Language"], answer: "Hyper Text Markup Language"},
+            {category: "CS", difficulty: 3, question: "How many bytes make up 1 Kilobyte (KB)?", options: ["1000", "1024", "1048", "100"], answer: "1024"}
+        ];
+
+        // --- 2. STATE ---
+        let questions = [];
+        let currentQuestionIndex = 0;
+        let userAnswers = {};
+        let isRunning = false;
+        let startTime = 0;
+        let timerInterval = null;
+        let soundEnabled = true;
+
+        // --- 3. NATIVE AUDIO (Zero Dependencies) ---
+        let audioCtx = null;
+        function playSound(type) {
+            if (!soundEnabled) return;
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+            const now = audioCtx.currentTime;
+
+            if (type === 'correct') {
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(523.25, now);
+                osc.frequency.exponentialRampToValueAtTime(880, now + 0.15);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                osc.start(now); osc.stop(now + 0.2);
+            } else if (type === 'wrong') {
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(220, now);
+                osc.frequency.exponentialRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.15, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.25);
+                osc.start(now); osc.stop(now + 0.25);
+            } else if (type === 'click') {
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(400, now);
+                gain.gain.setValueAtTime(0.05, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+                osc.start(now); osc.stop(now + 0.05);
+            }
+        }
+
+        // --- 4. EMBEDDED CANVAS CONFETTI ENGINE ---
+        function triggerConfetti() {
+            const canvas = document.getElementById('confetti-canvas');
+            const ctx = canvas.getContext('2d');
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+
+            let particles = Array.from({ length: 70 }, () => ({
+                x: canvas.width / 2,
+                y: canvas.height / 2,
+                vx: (Math.random() - 0.5) * 12,
+                vy: (Math.random() - 0.7) * 12,
+                color: ['#6366f1', '#10b981', '#f59e0b', '#f43f5e'][Math.floor(Math.random() * 4)],
+                size: Math.random() * 6 + 4,
+                alpha: 1
+            }));
+
+            function render() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach((p) => {
+                    p.x += p.vx;
+                    p.y += p.vy;
+                    p.vy += 0.25;
+                    p.alpha -= 0.015;
+                    ctx.globalAlpha = Math.max(0, p.alpha);
+                    ctx.fillStyle = p.color;
+                    ctx.fillRect(p.x, p.y, p.size, p.size);
+                });
+                particles = particles.filter(p => p.alpha > 0);
+                if (particles.length > 0) requestAnimationFrame(render);
+            }
+            render();
+        }
+
+        // --- 5. GAME ENGINE ---
+        function startQuiz() {
+            questions = [...QUIZ_DATA].sort(() => Math.random() - 0.5);
+            currentQuestionIndex = 0;
+            userAnswers = {};
+            isRunning = true;
+            startTime = Date.now();
+
+            clearInterval(timerInterval);
+            timerInterval = setInterval(updateTimer, 1000);
+
+            document.getElementById('review-button').style.display = 'inline-block';
+            document.getElementById('next-button').style.display = 'inline-block';
+            closeModal();
+            renderQuestion();
+            updateScoreDisplay();
+        }
+
+        function updateTimer() {
+            if (!isRunning) return;
+            const timeElapsed = Math.floor((Date.now() - startTime) / 1000);
+            const minutes = Math.floor(timeElapsed / 60);
+            const seconds = timeElapsed % 60;
+            document.getElementById('timer-val').textContent = 
+                `${minutes.toString().padStart(2, '0')}m ${seconds.toString().padStart(2, '0')}s`;
+        }
+
+        function calculateScore() {
+            let score = 0;
+            questions.forEach((q, i) => { 
+                if (userAnswers[i] === q.answer) score += q.difficulty; 
+            });
+            return score;
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-val').textContent = calculateScore();
+        }
+
+        function renderQuestion() {
+            if (currentQuestionIndex >= questions.length) {
+                finishQuiz();
+                return;
+            }
+
+            const q = questions[currentQuestionIndex];
+            document.getElementById('status-display').textContent = `Q ${currentQuestionIndex + 1} / ${questions.length}`;
+            document.getElementById('progress-bar').style.width = `${(currentQuestionIndex / questions.length) * 100}%`;
+
+            const main = document.getElementById('main-content');
+            main.innerHTML = `
+                <div style="margin-bottom: 1rem;">
+                    <span class="badge badge-${q.category.toLowerCase()}">${q.category}</span>
+                    <span style="font-size: 0.8rem; color: var(--text-muted)">⭐ ${q.difficulty} pt</span>
+                </div>
+                <h2 style="font-size: 1.35rem; margin-bottom: 1.5rem;">${q.question}</h2>
+                <div id="options-list"></div>
+            `;
+
+            const list = document.getElementById('options-list');
+            q.options.forEach((opt, i) => {
+                const card = document.createElement('div');
+                card.className = `option-card ${userAnswers[currentQuestionIndex] === opt ? 'selected' : ''}`;
+                card.innerHTML = `<strong style="width:24px;">${String.fromCharCode(65 + i)}.</strong> <span>${opt}</span>`;
+                card.onclick = () => {
+                    playSound('click');
+                    userAnswers[currentQuestionIndex] = opt;
+                    
+                    // Instant audio feedback & live score calculation
+                    if (opt === q.answer) playSound('correct');
+                    else playSound('wrong');
+
+                    updateScoreDisplay();
+                    renderQuestion();
+                };
+                list.appendChild(card);
+            });
+        }
+
+        function checkAndProceed() {
+            const q = questions[currentQuestionIndex];
+            const selected = userAnswers[currentQuestionIndex];
+            if (!selected && !confirm("Skip this question?")) return;
+
+            currentQuestionIndex++;
+            renderQuestion();
+        }
+
+        function finishQuiz() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('progress-bar').style.width = '100%';
+            document.getElementById('next-button').style.display = 'none';
+
+            const finalScore = calculateScore();
+            triggerConfetti();
+
+            document.getElementById('main-content').innerHTML = `
+                <div style="text-align: center;">
+                    <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Quiz Complete! 🎉</h1>
+                    <p style="color: var(--text-muted); margin-bottom: 1.5rem;">You scored <strong>${finalScore}</strong> points!</p>
+                    <button class="btn btn-primary" onclick="startQuiz()">Play Again</button>
+                </div>
+            `;
+        }
+
+        function openModal(html) {
+            const modal = document.getElementById('modal-overlay');
+            document.getElementById('modal-content').innerHTML = html;
+            modal.classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        // Review All Modal Implementation
+        function showReviewModal() {
+            let reviewHtml = `<h3 style="margin-bottom:1rem;">📋 Quiz Review</h3><div style="display:flex; flex-direction:column; gap:1rem;">`;
+            
+            questions.forEach((q, i) => {
+                const userAns = userAnswers[i] || "Unanswered";
+                const isCorrect = userAns === q.answer;
+                const statusColor = isCorrect ? 'var(--accent-emerald)' : 'var(--accent-rose)';
+                
+                reviewHtml += `
+                    <div style="background:rgba(15, 23, 42, 0.5); padding:0.75rem; border-radius:0.5rem; border-left: 4px solid ${statusColor};">
+                        <p style="font-size:0.9rem; font-weight:600; margin-bottom:0.25rem;">Q${i+1}: ${q.question}</p>
+                        <p style="font-size:0.8rem; color:var(--text-muted);">Your Answer: <span style="color:${statusColor}">${userAns}</span></p>
+                        ${!isCorrect ? `<p style="font-size:0.8rem; color:var(--text-muted);">Correct Answer: <span style="color:var(--accent-emerald)">${q.answer}</span></p>` : ''}
+                    </div>
+                `;
+            });
+            
+            reviewHtml += `</div><button class="btn btn-primary" style="width:100%; margin-top:1.5rem;" onclick="closeModal()">Close Review</button>`;
+            openModal(reviewHtml);
+        }
+
+        // Event Listeners
+        document.getElementById('next-button').addEventListener('click', checkAndProceed);
+        document.getElementById('review-button').addEventListener('click', showReviewModal);
+        document.getElementById('sound-btn').addEventListener('click', () => {
+            soundEnabled = !soundEnabled;
+            document.getElementById('sound-btn').textContent = soundEnabled ? '🔊' : '🔇';
+        });
+        document.getElementById('settings-btn').addEventListener('click', () => {
+            openModal(`
+                <h3 style="margin-bottom:1rem;">Settings</h3>
+                <p style="margin-bottom:1.5rem; color: var(--text-muted);">Configure your game preferences.</p>
+                <button class="btn btn-primary" style="width:100%" onclick="startQuiz()">Restart New Game</button>
+            `);
+        });
+
+        // Initialize on Load
+        window.addEventListener('load', startQuiz);
+    </script>
+</body>
+</html>
