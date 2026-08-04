@@ -83,19 +83,3 @@ flowchart TB
     style StylingLayer fill:#f9fbe7,stroke:#9e9d24,stroke-width:2px
     style EngineLayer fill:#e0f2f1,stroke:#00695c,stroke-width:2px
     style StorageLayer fill:#f1f8e9,stroke:#558b2f,stroke-width:2px
-
-
-
-🛠️ Technology Stack
-🌐 Frontend & Core Interface
-Pure HTML5, CSS3 Custom Properties, & Modern ES6+ JavaScript
-
-🔊 Native Browser APIs
-Web Audio Sound Synth, Canvas Particle Engine, & HTML5 LocalStorage
-
-👨‍💻 Community & Support
-🌟 Show Your Support
-If you find PyQuizMaster Pro useful or inspiring, please consider starring the project on GitHub!
-
-🧠 PyQuizMaster Pro: Interactive, Zero-Dependency Learning!
-© 2026 Ankit Singh (@ykankitsingh) | Released under the MIT License
